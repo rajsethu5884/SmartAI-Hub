@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SmartAI Hub — Student AI Resource Directory</title>
+<style>
+:root{
+  --bg:#0b0b12;
+  --card:#141422;
+  --card2:#1b1b2e;
+  --text:#f5f5f7;
+  --muted:#a9a9b8;
+  --purple:#8b5cf6;
+  --purple2:#c084fc;
+  --border:#26263d;
+  --green:#10b981;
+  --shadow:0 10px 30px rgba(139,92,246,.22);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,'Segoe UI',Roboto,sans-serif;}
+html{scroll-behavior:smooth;}
+body{background:radial-gradient(circle at top right,rgba(139,92,246,.16),transparent 30%),radial-gradient(circle at bottom left,rgba(192,132,252,.10),transparent 35%),var(--bg);color:var(--text);min-height:100vh;}
+.container{width:min(1400px,92%);margin:auto;}
+.glow{position:fixed;width:240px;height:240px;background:rgba(139,92,246,.07);border-radius:50%;filter:blur(90px);pointer-events:none;z-index:-1;}
+.glow.one{top:0;left:0;}.glow.two{bottom:0;right:0;}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0 10px;}
+.logo-sm{font-size:1.5rem;font-weight:900;background:linear-gradient(90deg,var(--purple),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-user{display:flex;align-items:center;gap:12px;}
+.nav-user span{font-size:.85rem;color:var(--muted);}
+.btn-sm{border:none;cursor:pointer;padding:8px 16px;border-radius:999px;background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;font-size:.8rem;font-weight:700;transition:.2s;}
+.btn-sm:hover{opacity:.88;}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.btn-outline:hover{border-color:var(--purple);color:#fff;}
+
+/* HERO */
+.hero{text-align:center;padding:54px 0 40px;}
+.hero h1{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:900;background:linear-gradient(90deg,var(--purple),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.15;}
+.hero p{color:var(--muted);margin-top:14px;font-size:1rem;max-width:680px;margin-inline:auto;line-height:1.75;}
+.badge-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px;}
+.badge{display:inline-block;background:rgba(139,92,246,.13);color:#c4b5fd;border:1px solid rgba(139,92,246,.25);padding:7px 14px;border-radius:999px;font-size:.78rem;font-weight:700;}
+.badge.green{background:rgba(16,185,129,.12);color:#6ee7b7;border-color:rgba(16,185,129,.22);}
+
+/* SEARCH */
+.search-wrap{display:flex;justify-content:center;margin:28px 0 0;}
+.search-box{position:relative;width:100%;max-width:760px;}
+.search-box input{width:100%;padding:16px 22px 16px 48px;border-radius:16px;border:1px solid var(--border);background:rgba(20,20,34,.96);color:#fff;font-size:1rem;outline:none;transition:.3s;}
+.search-box input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.16);}
+.search-box input::placeholder{color:var(--muted);}
+.search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--muted);}
+
+/* CATEGORY GRID (landing) */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:40px 0 60px;}
+.cat-card{background:linear-gradient(160deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:22px;padding:28px 24px;cursor:pointer;transition:.32s;position:relative;overflow:hidden;}
+.cat-card::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(255,255,255,.03),transparent);transform:translateX(-100%);transition:.7s;}
+.cat-card:hover::before{transform:translateX(100%);}
+.cat-card:hover{transform:translateY(-7px);border-color:var(--purple);box-shadow:var(--shadow);}
+.cat-icon{font-size:2.4rem;margin-bottom:14px;}
+.cat-name{font-size:1.2rem;font-weight:800;}
+.cat-desc{color:var(--muted);font-size:.85rem;margin-top:8px;line-height:1.6;}
+.cat-count{margin-top:14px;display:inline-block;background:rgba(139,92,246,.15);color:#c4b5fd;border:1px solid rgba(139,92,246,.22);padding:5px 12px;border-radius:999px;font-size:.76rem;font-weight:700;}
+
+/* TOOLS VIEW */
+.view-header{display:flex;align-items:center;gap:14px;padding:30px 0 24px;}
+.back-btn{border:1px solid var(--border);background:var(--card);color:var(--muted);cursor:pointer;padding:10px 18px;border-radius:12px;font-size:.85rem;font-weight:600;transition:.2s;}
+.back-btn:hover{border-color:var(--purple);color:#fff;}
+.view-title{font-size:1.6rem;font-weight:800;}
+
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:22px;padding-bottom:60px;}
+.tool-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:22px;padding:22px;transition:.32s;position:relative;overflow:hidden;}
+.tool-card::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(255,255,255,.03),transparent);transform:translateX(-100%);transition:.8s;}
+.tool-card:hover::before{transform:translateX(100%);}
+.tool-card:hover{transform:translateY(-7px);border-color:var(--purple);box-shadow:var(--shadow);}
+.tool-cat{color:var(--purple2);font-size:.75rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;}
+.tool-name{margin-top:8px;font-size:1.3rem;font-weight:800;}
+.tool-badge{display:inline-block;margin-top:10px;background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.22);padding:6px 12px;border-radius:999px;font-size:.76rem;font-weight:700;}
+.tool-desc{margin-top:14px;color:#d7d7e2;line-height:1.75;font-size:.9rem;}
+.tool-pros{color:#7ef0bc;margin-top:14px;font-size:.85rem;line-height:1.6;}
+.tool-cons{color:#ff9ca3;margin-top:6px;font-size:.85rem;line-height:1.6;}
+.tool-link{display:flex;align-items:center;justify-content:center;width:100%;text-decoration:none;padding:13px;border-radius:13px;background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;font-weight:700;font-size:.9rem;margin-top:20px;transition:.25s;}
+.tool-link:hover{opacity:.88;transform:scale(1.01);}
+
+/* EMPTY */
+.empty{text-align:center;color:var(--muted);font-size:1rem;padding:60px 20px;display:none;}
+
+/* MODAL overlay */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;}
+.modal{background:#12121f;border:1px solid var(--border);border-radius:24px;width:100%;max-width:480px;padding:36px 32px;position:relative;max-height:90vh;overflow-y:auto;}
+.modal h2{font-size:1.5rem;font-weight:800;margin-bottom:6px;}
+.modal p.sub{color:var(--muted);font-size:.88rem;margin-bottom:28px;line-height:1.6;}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:.8rem;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;}
+.field input,.field select{width:100%;padding:13px 16px;border-radius:12px;border:1px solid var(--border);background:rgba(20,20,34,.9);color:#fff;font-size:.95rem;outline:none;transition:.3s;}
+.field input:focus,.field select:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.14);}
+.field select option{background:#1b1b2e;}
+.btn-primary{width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:.25s;margin-top:8px;}
+.btn-primary:hover{opacity:.88;}
+.modal-switch{text-align:center;margin-top:18px;font-size:.85rem;color:var(--muted);}
+.modal-switch a{color:var(--purple2);cursor:pointer;font-weight:600;text-decoration:none;}
+.modal-switch a:hover{text-decoration:underline;}
+.close-btn{position:absolute;top:18px;right:20px;background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1;}
+.close-btn:hover{color:#fff;}
+.error-msg{color:#ff9ca3;font-size:.82rem;margin-top:10px;padding:10px 14px;background:rgba(255,100,100,.08);border-radius:10px;border:1px solid rgba(255,100,100,.15);}
+.success-msg{color:#6ee7b7;font-size:.82rem;margin-top:10px;padding:10px 14px;background:rgba(16,185,129,.08);border-radius:10px;border:1px solid rgba(16,185,129,.15);}
+
+/* FOOTER */
+footer{text-align:center;color:var(--muted);padding:36px 20px;border-top:1px solid var(--border);font-size:.85rem;}
+
+@media(max-width:600px){
+  .modal{padding:28px 20px;}
+  .hero h1{font-size:2rem;}
+  nav{padding:18px 0 6px;}
+}
+</style>
+</head>
+<body>
+<div class="glow one"></div>
+<div class="glow two"></div>
+
+<div class="container">
+  <nav>
+    <div class="logo-sm">SmartAI Hub</div>
+    <div class="nav-user" id="navUser">
+      <button class="btn-sm btn-outline" onclick="openModal('login')">Sign In</button>
+      <button class="btn-sm" onclick="openModal('register')">Join Free</button>
+    </div>
+  </nav>
+
+  <!-- LANDING PAGE -->
+  <div id="landingPage">
+    <div class="hero">
+      <h1>Your AI Resource Hub</h1>
+      <p>Hand-picked AI tools, offline models, coding assistants, design tools, career resources, free courses, and placement prep — all in one place for students.</p>
+      <div class="badge-row">
+        <span class="badge">39 Resources</span>
+        <span class="badge">7 Categories</span>
+        <span class="badge green">Mostly Free</span>
+        <span class="badge green">Student Friendly</span>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="globalSearch" placeholder="Search tools, courses, career resources..." oninput="onGlobalSearch(this.value)"/>
+      </div>
+    </div>
+
+    <!-- Category Cards -->
+    <div class="cat-grid" id="catGrid">
+      <!-- injected by JS -->
+    </div>
+  </div>
+
+  <!-- TOOLS VIEW -->
+  <div id="toolsPage" style="display:none;">
+    <div class="view-header">
+      <button class="back-btn" onclick="showLanding()">← Back</button>
+      <div>
+        <div class="tool-cat" id="viewCatLabel"></div>
+        <div class="view-title" id="viewTitle"></div>
+      </div>
+    </div>
+    <div class="tools-grid" id="toolsGrid"></div>
+    <div class="empty" id="emptyState">No resources found matching your search.</div>
+  </div>
+
+  <footer>SmartAI Hub &nbsp;•&nbsp; Built for Every Student &nbsp;•&nbsp; AI Tools · Courses · Career Resources</footer>
+</div>
+
+<!-- REGISTER MODAL -->
+<div class="modal-overlay" id="registerModal" style="display:none;">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('register')">×</button>
+    <h2>Create Account</h2>
+    <p class="sub">Join SmartAI Hub to save your favourite tools and track your learning progress.</p>
+    <div class="field"><label>Full Name</label><input type="text" id="reg_name" placeholder="e.g. Arjun Sharma"/></div>
+    <div class="field"><label>Age</label><input type="number" id="reg_age" placeholder="e.g. 20" min="10" max="60"/></div>
+    <div class="field"><label>Gmail Address</label><input type="email" id="reg_email" placeholder="yourname@gmail.com"/></div>
+    <div class="field">
+      <label>You are a</label>
+      <select id="reg_role">
+        <option value="">— Select —</option>
+        <option>School Student</option>
+        <option>College Student</option>
+        <option>Working Professional</option>
+        <option>Job Seeker</option>
+        <option>Researcher</option>
+      </select>
+    </div>
+    <div class="field" id="institutionField">
+      <label>College / School / Company</label>
+      <input type="text" id="reg_institution" placeholder="e.g. VIT Chennai"/>
+    </div>
+    <div class="field"><label>City / Place</label><input type="text" id="reg_place" placeholder="e.g. Chennai"/></div>
+    <div class="field">
+      <label>Why are you joining?</label>
+      <select id="reg_purpose">
+        <option value="">— Select —</option>
+        <option>Academic Study &amp; Assignments</option>
+        <option>Placement &amp; Interview Preparation</option>
+        <option>Learning to Code</option>
+        <option>Exploring AI Tools</option>
+        <option>Career Development</option>
+        <option>Personal Projects</option>
+      </select>
+    </div>
+    <div class="field"><label>Password</label><input type="password" id="reg_pass" placeholder="Minimum 6 characters"/></div>
+    <div id="regMsg"></div>
+    <button class="btn-primary" onclick="handleRegister()">Create My Account</button>
+    <div class="modal-switch">Already have an account? <a onclick="openModal('login')">Sign In</a></div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal" style="display:none;">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('login')">×</button>
+    <h2>Welcome Back</h2>
+    <p class="sub">Sign in to your SmartAI Hub account.</p>
+    <div class="field"><label>Gmail Address</label><input type="email" id="log_email" placeholder="yourname@gmail.com"/></div>
+    <div class="field"><label>Password</label><input type="password" id="log_pass" placeholder="Your password"/></div>
+    <div id="logMsg"></div>
+    <button class="btn-primary" onclick="handleLogin()">Sign In</button>
+    <div class="modal-switch">New here? <a onclick="openModal('register')">Create a free account</a></div>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = [
+  {id:"Core AI Assistants",icon:"🤖",name:"Core AI Assistants",desc:"ChatGPT, Claude, Gemini, DeepSeek and more — the best AI assistants for studying, writing, and research."},
+  {id:"Offline AI & Local LLMs",icon:"💻",name:"Offline AI & Local LLMs",desc:"Run AI models directly on your laptop with zero internet. Private, free, and fully offline."},
+  {id:"Coding & Tech",icon:"⚙️",name:"Coding & Tech",desc:"AI-powered code editors, autocomplete tools, and frontend generators to supercharge your development workflow."},
+  {id:"Design & PPT Creators",icon:"🎨",name:"Design & PPT Creators",desc:"Create stunning presentations, generate AI artwork, and produce professional voice-overs in minutes."},
+  {id:"Resume & Career Tools",icon:"📄",name:"Resume & Career Tools",desc:"Build ATS-optimised resumes, get AI writing assistance, and generate polished CVs that stand out."},
+  {id:"Placement Prep",icon:"🏆",name:"Placement Prep",desc:"LeetCode, HackerRank, roadmaps, internship portals, and everything you need to crack campus placements."},
+  {id:"Free Global Courses",icon:"🎓",name:"Free Global Courses",desc:"Google, Microsoft, and Harvard courses — earn internationally recognised certificates at no cost."},
+];
+
+const RESOURCES = [
+  {name:"ChatGPT",category:"Core AI Assistants",pricing:"Free Tier Available",link:"https://chatgpt.com",description:"The most popular AI assistant for students. Ask anything — from tough academic topics to assignment help — and get clear, well-structured answers instantly. Supports multiple languages.",pros:"Very fast responses with strong multi-language support.",cons:"Can occasionally produce incorrect answers for complex coding logic."},
+  {name:"Claude AI",category:"Core AI Assistants",pricing:"Free Tier Available",link:"https://claude.ai",description:"An advanced AI assistant ideal for writing essays, completing assignments, and understanding coding concepts. Delivers professional, human-like responses with exceptional reasoning quality.",pros:"Outstanding reasoning ability and detailed, nuanced explanations.",cons:"Free tier has a limited number of messages per day."},
+  {name:"Perplexity AI",category:"Core AI Assistants",pricing:"Free Tier",link:"https://perplexity.ai",description:"A research-focused AI that searches the internet in real time and delivers direct answers with cited source links. The best tool for academic research, thesis writing, and fact-checking.",pros:"Real-time web data with accurate, verifiable source citations.",cons:"Not well-suited for open-ended creative writing tasks."},
+  {name:"Gemini",category:"Core AI Assistants",pricing:"Free Tier Available",link:"https://gemini.google.com",description:"Google's own AI assistant that integrates directly with Google Docs, Gmail, and YouTube. Excellent for fast information retrieval and working seamlessly within the Google ecosystem.",pros:"Deep integration with Google Search and Google Workspace tools.",cons:"Responses can feel less creative on open-ended tasks."},
+  {name:"DeepSeek",category:"Core AI Assistants",pricing:"Free Access",link:"https://deepseek.com",description:"A trending open-source AI model that excels at solving complex mathematical problems, advanced reasoning tasks, and coding challenges — completely free to use.",pros:"Extremely strong logical reasoning capabilities, fully free to access.",cons:"Servers can become slow during peak usage hours."},
+  {name:"Ollama",category:"Offline AI & Local LLMs",pricing:"Free",link:"https://ollama.com",description:"Run powerful open-source AI models directly on your laptop without any internet connection. Perfect for private, offline AI work with no data sent to any server.",pros:"Completely private, works offline, and entirely free.",cons:"Requires decent hardware specifications to run smoothly."},
+  {name:"LM Studio",category:"Offline AI & Local LLMs",pricing:"Free",link:"https://lmstudio.ai",description:"A desktop application for easily downloading and running local AI language models. Provides a clean chat interface without needing any command-line knowledge.",pros:"Easy setup with a beginner-friendly graphical interface.",cons:"Larger AI models require more RAM and storage space."},
+  {name:"GPT4All",category:"Offline AI & Local LLMs",pricing:"Free",link:"https://gpt4all.io",description:"An open-source AI assistant that runs completely offline on your computer. No internet, no subscriptions, and no data privacy concerns — just local AI on your device.",pros:"Lightweight, simple to install, and fully private.",cons:"Less powerful than large cloud-based AI models."},
+  {name:"Jan",category:"Offline AI & Local LLMs",pricing:"Free",link:"https://jan.ai",description:"A modern, privacy-focused desktop AI client for running local language models. Offers a clean, minimal interface similar to ChatGPT but running entirely on your own machine.",pros:"Clean interface with a strong focus on user privacy.",cons:"Model performance varies depending on the model you choose."},
+  {name:"Open WebUI",category:"Offline AI & Local LLMs",pricing:"Free",link:"https://openwebui.com",description:"A self-hosted web interface for interacting with Ollama and other local AI models. Gives you a professional, browser-based AI dashboard running entirely on your own hardware.",pros:"Professional dashboard with rich features for local AI management.",cons:"Requires some technical setup and basic command-line knowledge."},
+  {name:"Llama 3",category:"Offline AI & Local LLMs",pricing:"Open Source",link:"https://ai.meta.com",description:"Meta's flagship open-weight language model, designed for high-quality reasoning, writing, and coding tasks when run locally via tools like Ollama or LM Studio.",pros:"Strong reasoning and writing quality comparable to paid cloud models.",cons:"Larger variants require significant hardware resources to run."},
+  {name:"Qwen",category:"Offline AI & Local LLMs",pricing:"Open Source",link:"https://qwenlm.ai",description:"Alibaba's powerful open-source AI model with excellent coding and reasoning abilities. Available in multiple sizes, making it suitable for both low-end and high-end hardware setups.",pros:"Exceptional coding capabilities and strong multilingual support.",cons:"Requires local installation and some technical configuration."},
+  {name:"DeepSeek R1",category:"Offline AI & Local LLMs",pricing:"Open Source",link:"https://deepseek.com",description:"A reasoning-specialised open-source model built for mathematics, logic, and technical problem-solving. Can be run locally for high-performance offline AI reasoning tasks.",pros:"Best-in-class logical and mathematical reasoning for an open-source model.",cons:"Larger model sizes require substantial disk space and RAM."},
+  {name:"Mistral",category:"Offline AI & Local LLMs",pricing:"Open Source",link:"https://mistral.ai",description:"A family of efficient, high-performing open-source AI models from a leading European AI company. Known for delivering strong results while being lightweight enough for local use.",pros:"Fast inference speed with a small resource footprint.",cons:"Smaller community and ecosystem compared to Meta's Llama models."},
+  {name:"Phi",category:"Offline AI & Local LLMs",pricing:"Open Source",link:"https://microsoft.com",description:"Microsoft's compact AI model series specifically optimised to run efficiently on local hardware. Designed to deliver strong performance even on laptops with limited specifications.",pros:"Can run on modest hardware with surprisingly capable performance.",cons:"Not as powerful as larger models for highly complex tasks."},
+  {name:"Cursor AI",category:"Coding & Tech",pricing:"Free Trial Included",link:"https://cursor.com",description:"An AI-powered code editor that is a true game-changer for engineering and IT students. Describe what you want to build in plain English and the AI writes the complete code for you instantly.",pros:"Dramatically accelerates coding speed and makes bug fixing much easier.",cons:"Requires installing a desktop application on your laptop."},
+  {name:"GitHub Copilot",category:"Coding & Tech",pricing:"Free for Students",link:"https://github.com",description:"An AI autocomplete tool built directly into VS Code. As you type code, it intelligently predicts and suggests the next lines automatically — like having a senior developer by your side.",pros:"Doubles coding speed. Completely free for verified students via GitHub Student Pack.",cons:"Suggestions can occasionally recommend logically incorrect code."},
+  {name:"v0 by Vercel",category:"Coding & Tech",pricing:"Free Tier Available",link:"https://v0.dev",description:"A visual frontend coding AI from Vercel. Simply describe any UI layout you need in plain English and it instantly generates clean, production-ready HTML or React component code.",pros:"Generates beautiful, functional UI code instantly with no prior design knowledge needed.",cons:"Supports frontend UI generation only — no backend or server-side code."},
+  {name:"Gamma AI",category:"Design & PPT Creators",pricing:"Free Credits on Signup",link:"https://gamma.app",description:"The fastest way to create stunning presentations. Simply type your project topic and Gamma automatically generates a complete, professional slide deck with layout, content, and images in under a minute.",pros:"Reduces hours of presentation work down to just 2 minutes.",cons:"Once your free credits are used up, a new account is required to get more."},
+  {name:"Leonardo AI",category:"Design & PPT Creators",pricing:"Daily Free Credits",link:"https://leonardo.ai",description:"Type a text description of any image you can imagine and this AI generates stunning, high-quality digital artwork and logos — perfect for college project visuals and creative presentations.",pros:"Produces impressive, highly detailed images ideal for project logos and banners.",cons:"The web interface has a slight learning curve for first-time users."},
+  {name:"Canva Magic Studio",category:"Design & PPT Creators",pricing:"Free Tier Available",link:"https://canva.com",description:"AI is now built directly into Canva's design platform. Generate presentation text, remove image backgrounds, and automatically resize designs for any platform — all with a single click.",pros:"Beginner-friendly drag-and-drop interface with thousands of professional templates.",cons:"The most powerful AI features require a paid Canva Pro subscription."},
+  {name:"ElevenLabs",category:"Design & PPT Creators",pricing:"Free Tier Available",link:"https://elevenlabs.io",description:"Converts any written text into ultra-realistic, human-sounding voice audio. Ideal for adding professional voice-overs to project presentations, educational videos, and storytelling content.",pros:"Produces natural-sounding voices with realistic human emotion and expression.",cons:"The free tier limits the total number of characters you can convert per month."},
+  {name:"FlowCV",category:"Resume & Career Tools",pricing:"Free",link:"https://flowcv.com",description:"Create professional, ATS-friendly resumes quickly using clean, modern templates. Export your finished resume as a high-quality PDF completely free with no hidden charges.",pros:"Completely free PDF export with no watermarks or paywalls.",cons:"The variety of available templates is more limited than some competitors."},
+  {name:"Resume.io",category:"Resume & Career Tools",pricing:"Free Templates Available",link:"https://resume.io",description:"A professional resume builder offering recruiter-approved templates designed to pass Applicant Tracking Systems. Easy step-by-step guidance makes it ideal for first-time resume writers.",pros:"Very easy to use with a clean, guided resume-building experience.",cons:"The best premium templates require a paid subscription to access."},
+  {name:"Novoresume",category:"Resume & Career Tools",pricing:"Free Basic Resume",link:"https://novoresume.com",description:"A widely used resume builder designed specifically for students and fresh graduates. Offers modern, ATS-optimised layouts that help your resume stand out to recruiters.",pros:"Clean ATS-friendly layouts that work well for entry-level job applications.",cons:"Advanced customisation features and additional templates require a paid plan."},
+  {name:"Kickresume",category:"Resume & Career Tools",pricing:"Free Tier Available",link:"https://kickresume.com",description:"An AI-powered resume and cover letter creator that helps you write compelling professional content. The built-in AI writing assistant suggests improvements to make your resume stronger.",pros:"AI writing assistant actively helps improve the quality of your resume content.",cons:"Some visually impressive templates are locked behind a premium plan."},
+  {name:"Teal AI Resume Builder",category:"Resume & Career Tools",pricing:"Free Tier Available",link:"https://tealhq.com",description:"An intelligent resume builder that optimises your resume specifically for Applicant Tracking Systems. Analyses job descriptions and suggests how to tailor your resume for each application.",pros:"Excellent ATS keyword matching that significantly improves interview callback rates.",cons:"Requires creating an account before you can start building your resume."},
+  {name:"LinkedIn Resume Builder",category:"Resume & Career Tools",pricing:"Free",link:"https://linkedin.com",description:"Generate a professional resume in seconds directly from your existing LinkedIn profile. The fastest way to create a resume if your LinkedIn profile is already complete and up to date.",pros:"Extremely fast resume generation with zero manual data entry required.",cons:"Resume quality is heavily dependent on how complete and detailed your LinkedIn profile is."},
+  {name:"Canva Resume Builder",category:"Resume & Career Tools",pricing:"Free Tier Available",link:"https://canva.com",description:"Create visually attractive resumes using Canva's extensive library of professionally designed templates. The intuitive drag-and-drop editor makes customisation simple for anyone.",pros:"Beginner-friendly with a wide selection of visually impressive resume designs.",cons:"ATS compatibility depends on the specific template chosen — some may not parse well."},
+  {name:"Overleaf Resume Templates",category:"Resume & Career Tools",pricing:"Free",link:"https://overleaf.com",description:"Professional LaTeX-based resume templates widely used by engineering and computer science students. Produces industry-standard, highly polished PDF output that impresses technical recruiters.",pros:"Produces clean, professional output standard in engineering and academic fields.",cons:"Requires basic familiarity with LaTeX syntax to customise your content."},
+  {name:"LeetCode",category:"Placement Prep",pricing:"Free + Premium",link:"https://leetcode.com",description:"The gold standard platform for software engineering interview preparation. Contains thousands of coding problems directly sourced from top company interviews at Google, Amazon, Microsoft, and more.",pros:"The most comprehensive collection of real company interview questions available.",cons:"Advanced difficulty problems can be very challenging for beginners without prior preparation."},
+  {name:"HackerRank",category:"Placement Prep",pricing:"Free",link:"https://hackerrank.com",description:"A popular platform for practising coding challenges, SQL queries, and aptitude questions commonly used in campus placement tests and online recruitment rounds.",pros:"Beginner-friendly structure with a smooth progression from basic to advanced problems.",cons:"Less company-specific interview content compared to LeetCode."},
+  {name:"GeeksforGeeks",category:"Placement Prep",pricing:"Free + Premium",link:"https://geeksforgeeks.org",description:"A comprehensive platform covering Data Structures, Algorithms, interview preparation, and core computer science concepts. One of the most widely used resources by Indian engineering students.",pros:"Enormous library of articles, tutorials, and practice problems covering virtually every CS topic.",cons:"The sheer volume of content can feel overwhelming for students just starting out."},
+  {name:"InterviewBit",category:"Placement Prep",pricing:"Free",link:"https://interviewbit.com",description:"A structured interview preparation platform offering coding problems, mock interviews, and well-organised learning roadmaps specifically designed for software engineering placements.",pros:"Well-organised curriculum with a clear, step-by-step path to placement readiness.",cons:"The question bank is smaller than LeetCode's, with less coverage of niche topics."},
+  {name:"Roadmap.sh",category:"Placement Prep",pricing:"Free",link:"https://roadmap.sh",description:"A community-driven platform offering detailed, visual step-by-step learning roadmaps for every major technology career path — from frontend development to DevOps and data science.",pros:"Excellent structured career guidance that helps students know exactly what to learn next.",cons:"This is a learning guidance platform, not a coding practice or assessment tool."},
+  {name:"Internshala",category:"Placement Prep",pricing:"Free",link:"https://internshala.com",description:"India's leading platform for finding internships, online training programmes, and fresher job opportunities. Widely used by college students across the country to gain practical work experience.",pros:"The most student-focused internship platform in India with thousands of active listings.",cons:"Quality and professionalism of listed opportunities can vary significantly by company."},
+  {name:"Naukri Campus",category:"Placement Prep",pricing:"Free",link:"https://campus.naukri.com",description:"A dedicated job and placement portal for fresh graduates and final-year students. Connects student profiles directly with a large network of employers actively hiring freshers.",pros:"Access to a large employer network specifically looking to hire fresh graduates.",cons:"A well-completed profile is essential to attract recruiter attention."},
+  {name:"Google Career Certificates",category:"Free Global Courses",pricing:"Free via Financial Aid",link:"https://grow.google",description:"Learn Data Analytics, UX Design, or Project Management directly from Google and earn an official, industry-recognised certificate. A strong addition to any student resume for job applications.",pros:"High industry recognition with a genuine Google-issued certificate.",cons:"Completing the full course requires consistent effort and dedication over several weeks."},
+  {name:"Microsoft Learn",category:"Free Global Courses",pricing:"Free Training",link:"https://learn.microsoft.com",description:"Learn Cloud Computing with Azure, AI fundamentals, and other Microsoft technologies completely free. Earn official Microsoft badges and training certificates valued across the IT industry.",pros:"Official, industry-standard curriculum developed and maintained by Microsoft.",cons:"The platform interface feels dry and overly corporate compared to other learning sites."},
+  {name:"Harvard CS50",category:"Free Global Courses",pricing:"Free Audit Available",link:"https://edx.org",description:"Widely considered the best free computer science course in the world. Harvard University's Introduction to CS is available online for anyone to study completely at their own pace.",pros:"The ultimate course for building a solid foundation in software and programming.",cons:"A verified certificate requires payment, but all course content is entirely free."},
+  {name:"Great Learning Academy",category:"Free Global Courses",pricing:"Free Courses + Certificates",link:"https://www.mygreatlearning.com/academy",description:"A platform offering hundreds of free certification courses in Artificial Intelligence, Data Science, Programming, Cloud Computing, and more — with certificates included at no cost.",pros:"Free certificates are included upon course completion with no hidden fees.",cons:"Courses are shorter and less comprehensive than full university-level degree programmes."},
+];
+
+let currentUser = null;
+
+function countForCategory(id){
+  return RESOURCES.filter(r=>r.category===id).length;
+}
+
+function renderCatGrid(filter=""){
+  const grid = document.getElementById("catGrid");
+  grid.innerHTML = CATEGORIES.map(cat=>{
+    const count = countForCategory(cat.id);
+    const tools = RESOURCES.filter(r=>r.category===cat.id);
+    const match = filter
+      ? tools.some(t=>t.name.toLowerCase().includes(filter)||t.description.toLowerCase().includes(filter)||t.pricing.toLowerCase().includes(filter))
+      : true;
+    if(!match) return "";
+    return `<div class="cat-card" onclick="showCategory('${cat.id}')">
+      <div class="cat-icon">${cat.icon}</div>
+      <div class="cat-name">${cat.name}</div>
+      <div class="cat-desc">${cat.desc}</div>
+      <span class="cat-count">${count} Resources</span>
+    </div>`;
+  }).join("");
+}
+
+function showCategory(catId){
+  document.getElementById("landingPage").style.display="none";
+  document.getElementById("toolsPage").style.display="block";
+  const cat = CATEGORIES.find(c=>c.id===catId);
+  document.getElementById("viewCatLabel").textContent="Category";
+  document.getElementById("viewTitle").textContent=cat ? cat.icon+" "+cat.name : catId;
+  renderTools(catId,"");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function renderTools(catId, search){
+  const grid = document.getElementById("toolsGrid");
+  const empty = document.getElementById("emptyState");
+  const s=search.toLowerCase().trim();
+  const filtered = RESOURCES.filter(r=>{
+    if(r.category!==catId) return false;
+    if(!s) return true;
+    return r.name.toLowerCase().includes(s)||r.description.toLowerCase().includes(s)||r.pricing.toLowerCase().includes(s)||r.pros.toLowerCase().includes(s)||r.cons.toLowerCase().includes(s);
+  });
+  if(filtered.length===0){
+    grid.innerHTML="";
+    empty.style.display="block";
+    return;
+  }
+  empty.style.display="none";
+  grid.innerHTML=filtered.map(t=>`
+    <div class="tool-card">
+      <div class="tool-cat">${t.category}</div>
+      <div class="tool-name">${t.name}</div>
+      <span class="tool-badge">${t.pricing}</span>
+      <div class="tool-desc">${t.description}</div>
+      <div class="tool-pros">✅ <strong>Pros:</strong> ${t.pros}</div>
+      <div class="tool-cons">❌ <strong>Cons:</strong> ${t.cons}</div>
+      <a class="tool-link" href="${t.link}" target="_blank" rel="noopener noreferrer">Visit Resource →</a>
+    </div>
+  `).join("");
+}
+
+function showLanding(){
+  document.getElementById("toolsPage").style.display="none";
+  document.getElementById("landingPage").style.display="block";
+  document.getElementById("globalSearch").value="";
+  renderCatGrid("");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function onGlobalSearch(val){
+  renderCatGrid(val.toLowerCase().trim());
+}
+
+/* MODAL */
+function openModal(type){
+  closeModal("register");closeModal("login");
+  document.getElementById(type==="register"?"registerModal":"loginModal").style.display="flex";
+}
+function closeModal(type){
+  document.getElementById(type==="register"?"registerModal":"loginModal").style.display="none";
+}
+
+/* STORAGE HELPERS */
+
+function setMsg(id,text,type){
+
+    const el = document.getElementById(id);
+
+    if(!text){
+
+        el.innerHTML="";
+        return;
+
+    }
+
+    el.className = type==="error"
+        ? "error-msg"
+        : "success-msg";
+
+    el.innerHTML=text;
+}
+
+async function handleRegister() {
+
+    const name = document.getElementById("reg_name").value.trim();
+    const age = document.getElementById("reg_age").value.trim();
+    const email = document.getElementById("reg_email").value.trim();
+    const role = document.getElementById("reg_role").value;
+    const institution = document.getElementById("reg_institution").value.trim();
+    const place = document.getElementById("reg_place").value.trim();
+    const purpose = document.getElementById("reg_purpose").value;
+    const pass = document.getElementById("reg_pass").value;
+
+    if(!name || !age || !email || !role || !place || !purpose || !pass){
+        setMsg("regMsg","Please fill all fields","error");
+        return;
+    }
+
+    try {
+
+        const response = await fetch("http://localhost:5000/register",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                name,
+                age,
+                email,
+                role,
+                institution,
+                place,
+                purpose,
+                pass
+            })
+        });
+
+        const result = await response.json();
+
+        if(result.success){
+
+            setMsg("regMsg","Registration Successful","success");
+
+            setTimeout(()=>{
+                closeModal("register");
+            },1000);
+
+        }else{
+
+            setMsg("regMsg",result.message,"error");
+
+        }
+
+    } catch(err){
+
+        console.error(err);
+        setMsg("regMsg","Server Connection Failed","error");
+
+    }
+}
+
+async function handleLogin(){
+
+    const email = document.getElementById("log_email").value.trim();
+    const pass = document.getElementById("log_pass").value;
+
+    if(!email || !pass){
+
+        setMsg("logMsg","Enter Email and Password","error");
+        return;
+
+    }
+
+    try{
+
+        const response = await fetch("http://localhost:5000/login",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                email,
+                pass
+            })
+        });
+
+        const result = await response.json();
+
+        if(result.success){
+
+            currentUser = result.user;
+
+            updateNav();
+
+            setMsg("logMsg","Login Successful","success");
+
+            setTimeout(()=>{
+                closeModal("login");
+            },1000);
+
+        }else{
+
+            setMsg("logMsg",result.message,"error");
+
+        }
+
+    }catch(err){
+
+        console.error(err);
+
+        setMsg("logMsg","Server Error","error");
+
+    }
+}
+
+function updateNav(){
+  const nav=document.getElementById("navUser");
+  if(currentUser){
+    nav.innerHTML=`<span>Hi, <strong>${currentUser.name.split(" ")[0]}</strong></span><button class="btn-sm btn-outline" onclick="handleLogout()">Sign Out</button>`;
+  } else {
+    nav.innerHTML=`<button class="btn-sm btn-outline" onclick="openModal('login')">Sign In</button><button class="btn-sm" onclick="openModal('register')">Join Free</button>`;
+  }
+}
+
+function handleLogout(){
+  currentUser=null;
+  updateNav();
+}
+
+window.addEventListener("click",function(e){
+  if(e.target.classList.contains("modal-overlay")){
+    closeModal("register");closeModal("login");
+  }
+});
+
+renderCatGrid();
+</script>
+</body>
+</html>
